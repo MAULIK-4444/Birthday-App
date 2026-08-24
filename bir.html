@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Happy Birthday! 🎉</title>
+  
+  <!-- Cursive Calligraphy Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --glow-cyan: #00f2fe;
+      --leaf-cyan: #00c6ff;
+      --glow-grass: #39ff14;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #ffffff;
+      overflow: hidden;
+      min-height: 100vh;
+      width: 100vw;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      visibility: visible;
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s;
+    }
+
+    .scene.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.92);
+      visibility: hidden;
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s 0.8s;
+    }
+
+    /* ================= SCENE 1: GLOWING FLOWERS ================= */
+    #scene1 {
+      background: radial-gradient(circle at 50% 60%, #081826 0%, #030712 80%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .fireflies {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(2.5px 2.5px at 30% 25%, #fffa65, transparent),
+        radial-gradient(3px 3px at 75% 18%, #fffa65, transparent),
+        radial-gradient(2px 2px at 15% 45%, #fffa65, transparent),
+        radial-gradient(3.5px 3.5px at 85% 42%, #fffa65, transparent),
+        radial-gradient(2px 2px at 50% 12%, #fffa65, transparent);
+      opacity: 0.7;
+      animation: fireflyBlink 3s ease-in-out infinite alternate;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @keyframes fireflyBlink {
+      0% { opacity: 0.35; transform: translateY(0); }
+      100% { opacity: 0.9; transform: translateY(-8px); }
+    }
+
+    .greeting-box {
+      position: relative;
+      z-index: 10;
+      margin-top: 8vh;
+      text-align: center;
+      opacity: 0;
+      animation: greetingTimeline 3s ease 5s forwards;
+    }
+
+    .greeting-text {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.6rem;
+      font-weight: 400;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: 1px;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 30px var(--glow-cyan);
+    }
+
+    @keyframes greetingTimeline {
+      0% { opacity: 0; transform: translateY(15px) scale(0.95); }
+      20% { opacity: 1; transform: translateY(0) scale(1); }
+      80% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-12px) scale(1.05); }
+    }
+
+    .garden-wrapper {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 85vh;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .grow-stem {
+      stroke-dasharray: 800;
+      stroke-dashoffset: 800;
+      animation: stemGrow 4.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    .leaf-pop {
+      transform-origin: center;
+      transform: scale(0);
+      animation: popAnim 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) 2.2s forwards;
+    }
+    .flower-bloom {
+      transform-origin: center;
+      transform: scale(0);
+      animation: bloomAnim 1.6s cubic-bezier(0.34, 1.56, 0.64, 1) 3.6s forwards;
+    }
+    .grass-rise {
+      stroke-dasharray: 400;
+      stroke-dashoffset: 400;
+      animation: stemGrow 3s ease-out 1s forwards;
+    }
+    .sway-main {
+      transform-origin: 200px 580px;
+      animation: plantSway 6s ease-in-out 4.5s infinite alternate;
+    }
+
+    @keyframes stemGrow { to { stroke-dashoffset: 0; } }
+    @keyframes popAnim { to { transform: scale(1); } }
+    @keyframes bloomAnim { to { transform: scale(1); } }
+    @keyframes plantSway {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(1.2deg); }
+      100% { transform: rotate(-1.5deg); }
+    }
+
+    #petalCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .cta-container {
+      position: absolute;
+      bottom: calc(8vh + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 25;
+      opacity: 0;
+      animation: btnAppear 1s ease 11s forwards;
+    }
+
+    .btn-move {
+      background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+      color: #ffffff;
+      font-size: 1.15rem;
+      font-weight: 700;
+      padding: 15px 38px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(0, 198, 255, 0.7), inset 0 0 10px rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-move:active { transform: scale(0.95); }
+    @keyframes btnAppear { to { opacity: 1; } }
+
+
+    /* ================= SCENE 2: CUSTOM SAPTHESH VIBE ================= */
+    
+    #scene2 {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      background-color: #050505;
+      transition: background 2s ease;
+    }
+
+    #scene2.lights-on {
+      background: radial-gradient(circle at 50% 30%, #3a2b25 0%, #080505 100%);
+    }
+
+    /* 1. Custom Light Bulbs */
+    .bulb-container {
+      position: absolute;
+      top: -150px;
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      padding: 0 10px;
+      transition: top 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 15;
+    }
+    .bulb-container.drop { top: -10px; }
+    
+    .bulb {
+      width: 45px;
+      height: auto;
+      transform-origin: top center;
+      transition: filter 0.5s ease;
+    }
+
+    /* Music Blinking Animation */
+    .bulb.blink {
+      animation: swingBlink 1.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes swingBlink {
+      0% { transform: rotate(-8deg); filter: brightness(0.8); }
+      100% { transform: rotate(8deg); filter: brightness(1.5) drop-shadow(0px 10px 15px rgba(255,255,255,0.5)); }
+    }
+
+    /* 2. Custom Banner Decorations */
+    .decor-container {
+      position: absolute;
+      top: -200px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      transition: top 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 10;
+      pointer-events: none;
+    }
+    .decor-container.drop { top: 0px; }
+    
+    .main-banner {
+      width: 100%;
+      max-width: 600px;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+    }
+
+    .border-banner {
+      position: absolute;
+      top: -200px;
+      width: 100%;
+      height: auto;
+      z-index: 9;
+      transition: top 1.5s ease 0.5s;
+    }
+    .border-banner.drop { top: -20px; }
+
+    /* 3. Real Balloons from b1 to b7 */
+    .balloon-container {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 8;
+    }
+    
+    .real-balloon {
+      position: absolute;
+      bottom: -150px;
+      width: 65px;
+      height: auto;
+      animation: floatUpBalloon linear forwards;
+      filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+    }
+
+    @keyframes floatUpBalloon {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-130vh) rotate(15deg); }
+    }
+
+    /* 4. Cake */
+    .cake-container {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%) scale(0);
+      z-index: 10;
+      text-align: center;
+      transition: transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s ease;
+    }
+    .cake-container.show { transform: translateY(-50%) scale(1.6); }
+    .cake-container.move-up { top: 30%; transform: translateY(-50%) scale(1.1); }
+    
+    .party-cake { 
+      font-size: 5rem; 
+      filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.4)); 
+    }
+
+    /* 5. Special Message */
+    .message-container {
+      position: absolute;
+      top: 50%;
+      width: 85%;
+      max-width: 400px;
+      background: rgba(25, 25, 30, 0.85);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 30px 25px;
+      border-radius: 15px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1.5s ease;
+      z-index: 20;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+    }
+    .message-container.reveal { opacity: 1; transform: translateY(0); }
+    
+    .message-container h2 { 
+      font-family: 'Great Vibes', cursive;
+      color: #fffa65; 
+      margin-bottom: 15px; 
+      font-size: 2.8rem;
+      font-weight: 400;
+    }
+    .message-container p { 
+      color: #ffffff; 
+      line-height: 1.6; 
+      font-size: 1.1rem; 
+    }
+
+    /* Custom Buttons Styling */
+    .action-panel {
+      position: absolute;
+      bottom: calc(10vh + env(safe-area-inset-bottom, 0px));
+      z-index: 30;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 60px; 
+    }
+
+    .seq-btn {
+      position: absolute;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: bold;
+      padding: 14px 32px;
+      border: 2px solid #34d399;
+      border-radius: 50px;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.3s ease, visibility 0.3s;
+    }
+    
+    .seq-btn.active { 
+      opacity: 1;
+      visibility: visible;
+      pointer-events: all; 
+      animation: popBtn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; 
+    }
+    
+    .seq-btn:active { transform: scale(0.92) !important; }
+
+    @keyframes popBtn {
+      0% { transform: scale(0.5); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= SCENE 1 ================= -->
+  <section id="scene1" class="scene">
+    <div class="fireflies"></div>
+    <div class="greeting-box">
+      <div id="greetingText" class="greeting-text">Good Evening</div>
+    </div>
+
+    <!-- Glowing Vector Botanical SVG (5 Flowers) -->
+    <svg class="garden-wrapper" viewBox="0 0 400 700" preserveAspectRatio="xMidYMax meet">
+      <defs>
+        <filter id="glowCyan" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="8" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <filter id="glowWhite" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="10" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <filter id="glowGrass" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="6" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+
+      <g filter="url(#glowGrass)">
+        <path class="grass-rise" d="M 60 670 Q 20 480 50 320" fill="none" stroke="#39ff14" stroke-width="4.5" stroke-linecap="round"/>
+        <path class="grass-rise" d="M 90 670 Q 45 530 65 410" fill="none" stroke="#39ff14" stroke-width="3" stroke-linecap="round"/>
+        <path class="grass-rise" d="M 340 670 Q 390 490 350 360" fill="none" stroke="#39ff14" stroke-width="4.5" stroke-linecap="round"/>
+        <path class="grass-rise" d="M 365 670 Q 390 550 375 450" fill="none" stroke="#39ff14" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+
+      <g class="sway-main">
+        <g filter="url(#glowCyan)">
+          <path class="grow-stem" d="M 195 650 Q 110 590 75 490" fill="none" stroke="#00c6ff" stroke-width="3.5" stroke-linecap="round"/>
+          <ellipse class="leaf-pop" cx="120" cy="560" rx="14" ry="7" transform="rotate(-25 120 560)" fill="#00f2fe"/>
+          <ellipse class="leaf-pop" cx="95" cy="525" rx="14" ry="7" transform="rotate(-35 95 525)" fill="#00f2fe"/>
+          <path class="grow-stem" d="M 205 650 Q 275 610 305 540" fill="none" stroke="#00c6ff" stroke-width="3" stroke-linecap="round"/>
+          <ellipse class="leaf-pop" cx="260" cy="590" rx="12" ry="6" transform="rotate(25 260 590)" fill="#00f2fe"/>
+          <ellipse class="leaf-pop" cx="295" cy="565" rx="12" ry="6" transform="rotate(35 295 565)" fill="#00f2fe"/>
+          <path class="grow-stem" d="M 195 650 Q 155 490 145 360" fill="none" stroke="#00c6ff" stroke-width="4.5" stroke-linecap="round"/>
+          <g class="leaf-pop">
+            <ellipse cx="160" cy="480" rx="16" ry="8" transform="rotate(-30 160 480)" fill="#00f2fe"/>
+            <ellipse cx="180" cy="490" rx="16" ry="8" transform="rotate(30 180 490)" fill="#00f2fe"/>
+            <ellipse cx="145" cy="410" rx="15" ry="8" transform="rotate(-30 145 410)" fill="#00f2fe"/>
+            <ellipse cx="165" cy="420" rx="15" ry="8" transform="rotate(30 165 420)" fill="#00f2fe"/>
+          </g>
+          <path class="grow-stem" d="M 200 650 L 200 240" fill="none" stroke="#00c6ff" stroke-width="5" stroke-linecap="round"/>
+          <g class="leaf-pop">
+            <ellipse cx="178" cy="530" rx="17" ry="9" transform="rotate(-35 178 530)" fill="#00f2fe"/>
+            <ellipse cx="222" cy="530" rx="17" ry="9" transform="rotate(35 222 530)" fill="#00f2fe"/>
+            <ellipse cx="178" cy="450" rx="17" ry="9" transform="rotate(-35 178 450)" fill="#00f2fe"/>
+            <ellipse cx="222" cy="450" rx="17" ry="9" transform="rotate(35 222 450)" fill="#00f2fe"/>
+            <ellipse cx="178" cy="370" rx="16" ry="8" transform="rotate(-35 178 370)" fill="#00f2fe"/>
+            <ellipse cx="222" cy="370" rx="16" ry="8" transform="rotate(35 222 370)" fill="#00f2fe"/>
+            <ellipse cx="180" cy="300" rx="14" ry="7" transform="rotate(-35 180 300)" fill="#00f2fe"/>
+            <ellipse cx="220" cy="300" rx="14" ry="7" transform="rotate(35 220 300)" fill="#00f2fe"/>
+          </g>
+          <path class="grow-stem" d="M 205 650 Q 245 480 265 350" fill="none" stroke="#00c6ff" stroke-width="4.5" stroke-linecap="round"/>
+          <g class="leaf-pop">
+            <ellipse cx="225" cy="480" rx="16" ry="8" transform="rotate(-30 225 480)" fill="#00f2fe"/>
+            <ellipse cx="245" cy="470" rx="16" ry="8" transform="rotate(30 245 470)" fill="#00f2fe"/>
+            <ellipse cx="245" cy="400" rx="15" ry="8" transform="rotate(-30 245 400)" fill="#00f2fe"/>
+            <ellipse cx="265" cy="390" rx="15" ry="8" transform="rotate(30 265 390)" fill="#00f2fe"/>
+          </g>
+        </g>
+
+        <!-- 5 WHITE GLOWING FLOWERS -->
+        <g class="flower-bloom" style="transform-origin: 200px 240px;" filter="url(#glowWhite)">
+          <g transform="translate(200, 240) scale(1.25)">
+            <ellipse cx="0" cy="-15" rx="9" ry="16" fill="#ffffff"/>
+            <ellipse cx="-16" cy="2" rx="16" ry="9" transform="rotate(-20 -16 2)" fill="#ffffff"/>
+            <ellipse cx="16" cy="2" rx="16" ry="9" transform="rotate(20 16 2)" fill="#ffffff"/>
+            <ellipse cx="0" cy="14" rx="10" ry="14" fill="#ffffff"/>
+            <circle cx="0" cy="2" r="5" fill="#e0f2fe"/>
+          </g>
+        </g>
+        <g class="flower-bloom" style="transform-origin: 145px 360px; animation-delay: 3.7s;" filter="url(#glowWhite)">
+          <g transform="translate(145, 360) rotate(-15) scale(1.05)">
+            <ellipse cx="0" cy="-15" rx="9" ry="16" fill="#ffffff"/>
+            <ellipse cx="-16" cy="2" rx="16" ry="9" transform="rotate(-20 -16 2)" fill="#ffffff"/>
+            <ellipse cx="16" cy="2" rx="16" ry="9" transform="rotate(20 16 2)" fill="#ffffff"/>
+            <ellipse cx="0" cy="14" rx="10" ry="14" fill="#ffffff"/>
+            <circle cx="0" cy="2" r="5" fill="#e0f2fe"/>
+          </g>
+        </g>
+        <g class="flower-bloom" style="transform-origin: 265px 350px; animation-delay: 3.8s;" filter="url(#glowWhite)">
+          <g transform="translate(265, 350) rotate(15) scale(1.05)">
+            <ellipse cx="0" cy="-15" rx="9" ry="16" fill="#ffffff"/>
+            <ellipse cx="-16" cy="2" rx="16" ry="9" transform="rotate(-20 -16 2)" fill="#ffffff"/>
+            <ellipse cx="16" cy="2" rx="16" ry="9" transform="rotate(20 16 2)" fill="#ffffff"/>
+            <ellipse cx="0" cy="14" rx="10" ry="14" fill="#ffffff"/>
+            <circle cx="0" cy="2" r="5" fill="#e0f2fe"/>
+          </g>
+        </g>
+        <g class="flower-bloom" style="transform-origin: 75px 490px; animation-delay: 3.9s;" filter="url(#glowWhite)">
+          <g transform="translate(75, 490) rotate(-35) scale(0.85)">
+            <ellipse cx="0" cy="-15" rx="9" ry="16" fill="#ffffff"/>
+            <ellipse cx="-16" cy="2" rx="16" ry="9" transform="rotate(-20 -16 2)" fill="#ffffff"/>
+            <ellipse cx="16" cy="2" rx="16" ry="9" transform="rotate(20 16 2)" fill="#ffffff"/>
+            <ellipse cx="0" cy="14" rx="10" ry="14" fill="#ffffff"/>
+            <circle cx="0" cy="2" r="5" fill="#e0f2fe"/>
+          </g>
+        </g>
+        <g class="flower-bloom" style="transform-origin: 305px 540px; animation-delay: 4.0s;" filter="url(#glowWhite)">
+          <g transform="translate(305, 540) rotate(35) scale(0.85)">
+            <ellipse cx="0" cy="-15" rx="9" ry="16" fill="#ffffff"/>
+            <ellipse cx="-16" cy="2" rx="16" ry="9" transform="rotate(-20 -16 2)" fill="#ffffff"/>
+            <ellipse cx="16" cy="2" rx="16" ry="9" transform="rotate(20 16 2)" fill="#ffffff"/>
+            <ellipse cx="0" cy="14" rx="10" ry="14" fill="#ffffff"/>
+            <circle cx="0" cy="2" r="5" fill="#e0f2fe"/>
+          </g>
+        </g>
+      </g>
+    </svg>
+
+    <canvas id="petalCanvas"></canvas>
+
+    <div class="cta-container">
+      <button class="btn-move" onclick="goToScene2()">
+        <span>Let's Move</span>
+        <span>➡️</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= SCENE 2: CUSTOM VIBE SEQUENCE ================= -->
+  <section id="scene2" class="scene hidden">
+    
+    <!-- Audio File -->
+    <audio id="hbd-audio" src="hbd.mp3"></audio>
+
+    <!-- Step 1 & 2: Custom Bulbs Hanging from top -->
+    <div id="lightBulbs" class="bulb-container">
+      <!-- Default unlit bulb.png, mapped to light up with custom colors -->
+      <img class="bulb" src="bulb.png" data-color="bulb_red.png" alt="bulb">
+      <img class="bulb" src="bulb.png" data-color="bulb_blue.png" alt="bulb">
+      <img class="bulb" src="bulb.png" data-color="bulb_yellow.png" alt="bulb">
+      <img class="bulb" src="bulb.png" data-color="bulb_green.png" alt="bulb">
+      <img class="bulb" src="bulb.png" data-color="bulb_pink.png" alt="bulb">
+      <img class="bulb" src="bulb.png" data-color="bulb_orange.png" alt="bulb">
+    </div>
+    
+    <!-- Step 3: Custom Banners -->
+    <img id="balloonBorder" class="border-banner" src="Balloon-Border.png" alt="Border">
+    <div id="decorations" class="decor-container">
+      <img class="main-banner" src="banner.png" alt="Happy Birthday Banner">
+    </div>
+
+    <!-- Step 4: Real Floating Balloons Container -->
+    <div id="balloonContainer" class="balloon-container"></div>
+
+    <!-- Step 5: The Cake -->
+    <div id="cakeBox" class="cake-container">
+      <div class="party-cake">🎂</div>
+    </div>
+
+    <!-- Step 6: Final Message -->
+    <div id="messageBox" class="message-container">
+      <h2>Happy Birthday!</h2>
+      <p>Wishing you the most wonderful day. Let's make this year amazing, stronger, and unstoppable!</p>
+    </div>
+
+    <!-- Sequence Action Buttons -->
+    <div class="action-panel">
+      <button id="btn1" class="seq-btn" onclick="step1_lights()">💡 Turn on Lights</button>
+      <button id="btn2" class="seq-btn" onclick="step2_music()">🎵 Play Music</button>
+      <button id="btn3" class="seq-btn" onclick="step3_decor()">🎊 Decorate</button>
+      <button id="btn4" class="seq-btn" onclick="step4_balloons()">🎈 Fly Balloons</button>
+      <button id="btn5" class="seq-btn" onclick="step5_cake()">🎂 Bring the Cake</button>
+      <button id="btn6" class="seq-btn" onclick="step6_message()">💌 A Message For You</button>
+    </div>
+  </section>
+
+  <script>
+    /* ================= SCENE 1 LOGIC ================= */
+    function setGreeting() {
+      const hour = new Date().getHours();
+      let text = "Good Evening";
+      if (hour >= 5 && hour < 12) text = "Good Morning";
+      else if (hour >= 12 && hour < 17) text = "Good Afternoon";
+      else if (hour >= 17 && hour < 21) text = "Good Evening";
+      else text = "Good Night";
+      document.getElementById("greetingText").innerText = text;
+    }
+    setGreeting();
+
+    const canvas = document.getElementById("petalCanvas");
+    const ctx = canvas.getContext("2d");
+    let width, height, petals = [];
+
+    function resizeCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    class DensePetal {
+      constructor(isStorm) { this.reset(isStorm); }
+      reset(isStorm) {
+        this.x = Math.random() * width;
+        this.y = isStorm ? (Math.random() * -height) : Math.random() * height;
+        this.length = Math.random() * 14 + 10;
+        this.width = this.length * (Math.random() * 0.3 + 0.45);
+        this.speedX = isStorm ? (Math.random() * 4 + 2) : (Math.random() * 2 - 1);
+        this.speedY = isStorm ? (Math.random() * 5 + 3.5) : (Math.random() * 1.5 + 0.8);
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() - 0.5) * 0.05;
+        this.isWhite = Math.random() > 0.35;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.rotation += this.rotSpeed;
+        if (this.y > height + 30 || this.x > width + 30) {
+          this.reset(false);
+          this.y = -20;
+        }
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.beginPath();
+        ctx.moveTo(0, -this.length / 2);
+        ctx.bezierCurveTo(this.width, -this.length / 4, this.width, this.length / 3, 0, this.length / 2);
+        ctx.bezierCurveTo(-this.width, this.length / 3, -this.width, -this.length / 4, 0, -this.length / 2);
+        const grad = ctx.createLinearGradient(0, -this.length / 2, 0, this.length / 2);
+        if (this.isWhite) {
+          grad.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+          grad.addColorStop(1, "rgba(224, 242, 254, 0.65)");
+        } else {
+          grad.addColorStop(0, "rgba(0, 242, 254, 0.9)");
+          grad.addColorStop(1, "rgba(0, 114, 255, 0.6)");
+        }
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 50; i++) petals.push(new DensePetal(false));
+    setTimeout(() => {
+      for (let i = 0; i < 75; i++) petals.push(new DensePetal(true));
+    }, 7000);
+
+    function renderLoop() {
+      ctx.clearRect(0, 0, width, height);
+      petals.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(renderLoop);
+    }
+    renderLoop();
+
+    /* Transition */
+    function goToScene2() {
+      document.getElementById("scene1").classList.add("hidden");
+      document.getElementById("scene2").classList.remove("hidden");
+      canvas.style.display = "none";
+
+      // Drop unlit bulbs automatically upon entering Scene 2
+      setTimeout(() => {
+        document.getElementById('lightBulbs').classList.add('drop');
+        document.getElementById("btn1").classList.add("active");
+      }, 500);
+    }
+
+    /* ================= SCENE 2: CUSTOM SEQUENCE LOGIC ================= */
+    
+    function switchButton(hideId, showId) {
+      document.getElementById(hideId).classList.remove('active');
+      if(showId) {
+        setTimeout(() => {
+          document.getElementById(showId).classList.add('active');
+        }, 300); 
+      }
+    }
+
+    // Step 1: Change to colored bulbs and turn on background lights
+    function step1_lights() {
+      document.getElementById('scene2').classList.add('lights-on');
+      
+      let bulbs = document.querySelectorAll('.bulb');
+      bulbs.forEach(b => {
+        let colorSrc = b.getAttribute('data-color');
+        b.src = colorSrc; 
+      });
+
+      switchButton('btn1', 'btn2');
+    }
+
+    // Step 2: Play song and make bulbs blink
+    function step2_music() {
+      let audio = document.getElementById("hbd-audio");
+      audio.play().catch(error => console.log("Audio Play Blocked by browser", error));
+      
+      let bulbs = document.querySelectorAll('.bulb');
+      bulbs.forEach((b, index) => {
+        // Randomize the blink delay a bit so they don't swing completely identical
+        b.style.animationDelay = (index * 0.2) + 's';
+        b.classList.add('blink');
+      });
+
+      switchButton('btn2', 'btn3');
+    }
+
+    // Step 3: Drop Custom Banner & Border
+    function step3_decor() {
+      document.getElementById('decorations').classList.add('drop');
+      document.getElementById('balloonBorder').classList.add('drop');
+      switchButton('btn3', 'btn4');
+    }
+
+    // Step 4: Float actual balloon images (b1 to b7)
+    function step4_balloons() {
+      const container = document.getElementById('balloonContainer');
+      const realBalloons = ['b1.png', 'b2.png', 'b3.png', 'b4.png', 'b5.png', 'b6.png', 'b7.png'];
+      
+      for (let i = 0; i < 25; i++) {
+        let balloon = document.createElement('img');
+        balloon.src = realBalloons[Math.floor(Math.random() * realBalloons.length)];
+        balloon.className = 'real-balloon';
+        balloon.style.left = Math.random() * 90 + 5 + '%';
+        balloon.style.animationDuration = (Math.random() * 4 + 4) + 's';
+        balloon.style.animationDelay = (Math.random() * 2) + 's';
+        
+        // Randomly scale some balloons slightly
+        let scale = Math.random() * 0.4 + 0.8; 
+        balloon.style.transform = `scale(${scale})`;
+
+        container.appendChild(balloon);
+      }
+      switchButton('btn4', 'btn5');
+    }
+
+    // Step 5: Show Cake and Confetti
+    function step5_cake() {
+      document.getElementById('cakeBox').classList.add('show');
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+      }
+      switchButton('btn5', 'btn6');
+    }
+
+    // Step 6: Reveal Secret Message
+    function step6_message() {
+      document.getElementById('cakeBox').classList.add('move-up');
+      setTimeout(() => {
+        document.getElementById('messageBox').classList.add('reveal');
+      }, 500);
+      switchButton('btn6', null);
+    }
+  </script>
+</body>
+</html>
