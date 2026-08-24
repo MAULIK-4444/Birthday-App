@@ -17,8 +17,6 @@
     :root {
       --bg-dark: #030712;
       --glow-cyan: #00f2fe;
-      --leaf-cyan: #00c6ff;
-      --glow-grass: #39ff14;
     }
 
     * {
@@ -56,7 +54,7 @@
       transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s 0.8s;
     }
 
-    /* ================= SCENE 1: GLOWING FLOWERS ================= */
+    /* ================= SCENE 1 ================= */
     #scene1 {
       background: radial-gradient(circle at 50% 60%, #081826 0%, #030712 80%);
       display: flex;
@@ -193,9 +191,7 @@
     .btn-move:active { transform: scale(0.95); }
     @keyframes btnAppear { to { opacity: 1; } }
 
-
-    /* ================= SCENE 2: CUSTOM SAPTHESH VIBE ================= */
-    
+    /* ================= SCENE 2 ================= */
     #scene2 {
       overflow: hidden;
       display: flex;
@@ -211,7 +207,6 @@
       background: radial-gradient(circle at 50% 30%, #3a2b25 0%, #080505 100%);
     }
 
-    /* 1. Custom Light Bulbs */
     .bulb-container {
       position: absolute;
       top: -150px;
@@ -231,7 +226,6 @@
       transition: filter 0.5s ease;
     }
 
-    /* Music Blinking Animation */
     .bulb.blink {
       animation: swingBlink 1.5s infinite alternate ease-in-out;
     }
@@ -241,7 +235,6 @@
       100% { transform: rotate(8deg); filter: brightness(1.5) drop-shadow(0px 10px 15px rgba(255,255,255,0.5)); }
     }
 
-    /* 2. Custom Banner Decorations */
     .decor-container {
       position: absolute;
       top: -200px;
@@ -270,7 +263,6 @@
     }
     .border-banner.drop { top: -20px; }
 
-    /* 3. Real Balloons from b1 to b7 */
     .balloon-container {
       position: absolute;
       inset: 0;
@@ -293,7 +285,6 @@
       100% { transform: translateY(-130vh) rotate(15deg); }
     }
 
-    /* 4. Cake */
     .cake-container {
       position: absolute;
       top: 50%;
@@ -303,27 +294,26 @@
       transition: transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1), top 1s ease;
     }
     .cake-container.show { transform: translateY(-50%) scale(1.6); }
-    .cake-container.move-up { top: 30%; transform: translateY(-50%) scale(1.1); }
+    .cake-container.move-up { top: 25%; transform: translateY(-50%) scale(1); }
     
     .party-cake { 
       font-size: 5rem; 
       filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.4)); 
     }
 
-    /* 5. Special Message */
     .message-container {
       position: absolute;
-      top: 50%;
+      top: 52%;
       width: 85%;
       max-width: 400px;
       background: rgba(25, 25, 30, 0.85);
       border: 1px solid rgba(255,255,255,0.2);
-      padding: 30px 25px;
+      padding: 25px 20px;
       border-radius: 15px;
       text-align: center;
       opacity: 0;
       transform: translateY(30px);
-      transition: all 1.5s ease;
+      transition: all 1s ease;
       z-index: 20;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(10px);
@@ -333,17 +323,82 @@
     .message-container h2 { 
       font-family: 'Great Vibes', cursive;
       color: #fffa65; 
-      margin-bottom: 15px; 
-      font-size: 2.8rem;
+      margin-bottom: 10px; 
+      font-size: 2.5rem;
       font-weight: 400;
     }
     .message-container p { 
       color: #ffffff; 
-      line-height: 1.6; 
-      font-size: 1.1rem; 
+      line-height: 1.5; 
+      font-size: 1rem; 
+      margin-bottom: 15px;
     }
 
-    /* Custom Buttons Styling */
+    .danger-btn {
+      background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 10px 24px;
+      border: 2px solid #f87171;
+      border-radius: 50px;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+      cursor: pointer;
+      display: none;
+      margin: 0 auto;
+      animation: pulseDanger 1.5s infinite;
+    }
+    .danger-btn.show-danger { display: inline-block; }
+
+    @keyframes pulseDanger {
+      0% { transform: scale(1); box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); }
+      50% { transform: scale(1.08); box-shadow: 0 0 25px rgba(239, 68, 68, 0.9); }
+      100% { transform: scale(1); box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); }
+    }
+
+    /* ================= DANGEROUS FULLSCREEN OVERLAY ================= */
+    .danger-overlay {
+      position: fixed;
+      inset: 0;
+      background: #000000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    .danger-overlay.show-danger-mode {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .danger-gif {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover; /* Mobile aur Desktop dono par poori screen par fit karega */
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .danger-animated-text {
+      position: relative;
+      z-index: 2;
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.5rem;
+      color: #fffa65;
+      text-align: center;
+      text-shadow: 0 0 20px #ff0000, 0 0 30px #ff3b3b;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px 30px;
+      border-radius: 20px;
+      opacity: 0; /* Shuru me hidden rahega taaki exact kiss ke waqt dikhe */
+      transition: opacity 0.3s ease;
+    }
+
     .action-panel {
       position: absolute;
       bottom: calc(10vh + env(safe-area-inset-bottom, 0px));
@@ -389,14 +444,12 @@
 </head>
 <body>
 
-  <!-- ================= SCENE 1 ================= -->
   <section id="scene1" class="scene">
     <div class="fireflies"></div>
     <div class="greeting-box">
       <div id="greetingText" class="greeting-text">Good Evening</div>
     </div>
 
-    <!-- Glowing Vector Botanical SVG (5 Flowers) -->
     <svg class="garden-wrapper" viewBox="0 0 400 700" preserveAspectRatio="xMidYMax meet">
       <defs>
         <filter id="glowCyan" x="-40%" y="-40%" width="180%" height="180%">
@@ -455,7 +508,7 @@
           </g>
         </g>
 
-        <!-- 5 WHITE GLOWING FLOWERS -->
+        <!-- 5 FLOWERS -->
         <g class="flower-bloom" style="transform-origin: 200px 240px;" filter="url(#glowWhite)">
           <g transform="translate(200, 240) scale(1.25)">
             <ellipse cx="0" cy="-15" rx="9" ry="16" fill="#ffffff"/>
@@ -514,15 +567,14 @@
     </div>
   </section>
 
-  <!-- ================= SCENE 2: CUSTOM VIBE SEQUENCE ================= -->
+  <!-- ================= SCENE 2 ================= -->
   <section id="scene2" class="scene hidden">
     
-    <!-- Audio File -->
+    <!-- Audio Files -->
     <audio id="hbd-audio" src="hbd.mp3"></audio>
+    <audio id="danger-audio" src="danger-sound.mp3"></audio>
 
-    <!-- Step 1 & 2: Custom Bulbs Hanging from top -->
     <div id="lightBulbs" class="bulb-container">
-      <!-- Default unlit bulb.png, mapped to light up with custom colors -->
       <img class="bulb" src="bulb.png" data-color="bulb_red.png" alt="bulb">
       <img class="bulb" src="bulb.png" data-color="bulb_blue.png" alt="bulb">
       <img class="bulb" src="bulb.png" data-color="bulb_yellow.png" alt="bulb">
@@ -531,27 +583,29 @@
       <img class="bulb" src="bulb.png" data-color="bulb_orange.png" alt="bulb">
     </div>
     
-    <!-- Step 3: Custom Banners -->
     <img id="balloonBorder" class="border-banner" src="Balloon-Border.png" alt="Border">
     <div id="decorations" class="decor-container">
       <img class="main-banner" src="banner.png" alt="Happy Birthday Banner">
     </div>
 
-    <!-- Step 4: Real Floating Balloons Container -->
     <div id="balloonContainer" class="balloon-container"></div>
 
-    <!-- Step 5: The Cake -->
     <div id="cakeBox" class="cake-container">
       <div class="party-cake">🎂</div>
     </div>
 
-    <!-- Step 6: Final Message -->
     <div id="messageBox" class="message-container">
       <h2>Happy Birthday!</h2>
       <p>Wishing you the most wonderful day. Let's make this year amazing, stronger, and unstoppable!</p>
+      <button id="dangerBtn" class="danger-btn" onclick="triggerDangerMode()">⚠️ Dangerous ⚠️</button>
     </div>
 
-    <!-- Sequence Action Buttons -->
+    <!-- FULLSCREEN OVERLAY WITH SYNCED TEXT -->
+    <div id="dangerOverlay" class="danger-overlay">
+      <img src="kiss.gif" alt="Surprise Animation" class="danger-gif">
+      <div id="dangerText" class="danger-animated-text">Happy Birthday Shivraj! 💖</div>
+    </div>
+
     <div class="action-panel">
       <button id="btn1" class="seq-btn" onclick="step1_lights()">💡 Turn on Lights</button>
       <button id="btn2" class="seq-btn" onclick="step2_music()">🎵 Play Music</button>
@@ -563,7 +617,6 @@
   </section>
 
   <script>
-    /* ================= SCENE 1 LOGIC ================= */
     function setGreeting() {
       const hour = new Date().getHours();
       let text = "Good Evening";
@@ -642,23 +695,19 @@
     }
     renderLoop();
 
-    /* Transition */
     function goToScene2() {
       document.getElementById("scene1").classList.add("hidden");
       document.getElementById("scene2").classList.remove("hidden");
       canvas.style.display = "none";
 
-      // Drop unlit bulbs automatically upon entering Scene 2
       setTimeout(() => {
         document.getElementById('lightBulbs').classList.add('drop');
         document.getElementById("btn1").classList.add("active");
       }, 500);
     }
 
-    /* ================= SCENE 2: CUSTOM SEQUENCE LOGIC ================= */
-    
     function switchButton(hideId, showId) {
-      document.getElementById(hideId).classList.remove('active');
+      if(hideId) document.getElementById(hideId).classList.remove('active');
       if(showId) {
         setTimeout(() => {
           document.getElementById(showId).classList.add('active');
@@ -666,42 +715,30 @@
       }
     }
 
-    // Step 1: Change to colored bulbs and turn on background lights
     function step1_lights() {
       document.getElementById('scene2').classList.add('lights-on');
-      
       let bulbs = document.querySelectorAll('.bulb');
-      bulbs.forEach(b => {
-        let colorSrc = b.getAttribute('data-color');
-        b.src = colorSrc; 
-      });
-
+      bulbs.forEach(b => { b.src = b.getAttribute('data-color'); });
       switchButton('btn1', 'btn2');
     }
 
-    // Step 2: Play song and make bulbs blink
     function step2_music() {
       let audio = document.getElementById("hbd-audio");
-      audio.play().catch(error => console.log("Audio Play Blocked by browser", error));
-      
+      audio.play().catch(error => console.log("Audio Play Blocked", error));
       let bulbs = document.querySelectorAll('.bulb');
       bulbs.forEach((b, index) => {
-        // Randomize the blink delay a bit so they don't swing completely identical
         b.style.animationDelay = (index * 0.2) + 's';
         b.classList.add('blink');
       });
-
       switchButton('btn2', 'btn3');
     }
 
-    // Step 3: Drop Custom Banner & Border
     function step3_decor() {
       document.getElementById('decorations').classList.add('drop');
       document.getElementById('balloonBorder').classList.add('drop');
       switchButton('btn3', 'btn4');
     }
 
-    // Step 4: Float actual balloon images (b1 to b7)
     function step4_balloons() {
       const container = document.getElementById('balloonContainer');
       const realBalloons = ['b1.png', 'b2.png', 'b3.png', 'b4.png', 'b5.png', 'b6.png', 'b7.png'];
@@ -713,17 +750,13 @@
         balloon.style.left = Math.random() * 90 + 5 + '%';
         balloon.style.animationDuration = (Math.random() * 4 + 4) + 's';
         balloon.style.animationDelay = (Math.random() * 2) + 's';
-        
-        // Randomly scale some balloons slightly
         let scale = Math.random() * 0.4 + 0.8; 
         balloon.style.transform = `scale(${scale})`;
-
         container.appendChild(balloon);
       }
       switchButton('btn4', 'btn5');
     }
 
-    // Step 5: Show Cake and Confetti
     function step5_cake() {
       document.getElementById('cakeBox').classList.add('show');
       if (typeof confetti === 'function') {
@@ -732,13 +765,47 @@
       switchButton('btn5', 'btn6');
     }
 
-    // Step 6: Reveal Secret Message
     function step6_message() {
       document.getElementById('cakeBox').classList.add('move-up');
       setTimeout(() => {
         document.getElementById('messageBox').classList.add('reveal');
       }, 500);
       switchButton('btn6', null);
+
+      setTimeout(() => {
+        document.getElementById('dangerBtn').classList.add('show-danger');
+      }, 4000);
+    }
+
+    // TRIGGER DANGEROUS MODE WITH EXACT GIF TIMING & SOUND
+    function triggerDangerMode() {
+      const overlay = document.getElementById('dangerOverlay');
+      overlay.classList.add('show-danger-mode');
+
+      // Play sound effect if available
+      let dangerAudio = document.getElementById("danger-audio");
+      dangerAudio.play().catch(e => console.log("Sound effect blocked", e));
+
+      const textElem = document.getElementById('dangerText');
+      
+      // Jaise hi GIF start ho, 1 second baad text fade-in ho (exact jab kiss/heart aane ka time ho)
+      setTimeout(() => {
+        textElem.style.opacity = '1';
+      }, 1000);
+
+      // Har 2 second me heart shapes aur text variations blink/change honge
+      const messages = [
+        "Happy Birthday Shivraj! ❤️",
+        "Legend Shivraj! 💖",
+        "Always Awesome Shivraj! 💘",
+        "Happy Birthday Shivraj! 💓"
+      ];
+
+      let index = 0;
+      setInterval(() => {
+        index = (index + 1) % messages.length;
+        textElem.innerText = messages[index];
+      }, 2000);
     }
   </script>
 </body>
